@@ -1,6 +1,5 @@
 package com.luv2code.springboot.cruddemo.rest;
 
-import com.luv2code.springboot.cruddemo.dao.EmployeeDAO;
 import com.luv2code.springboot.cruddemo.entity.Employee;
 import com.luv2code.springboot.cruddemo.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class EmployeeRestController {
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
     @Autowired
     public EmployeeRestController(EmployeeService employeeService) {
@@ -37,5 +36,20 @@ public class EmployeeRestController {
 
         employee.setId(0);
        return employeeService.saveEmployee(employee);
+    }
+
+    @PutMapping("/employees")
+    public Employee updateEmployee(@RequestBody Employee employee){
+       return employeeService.saveEmployee(employee);
+    }
+
+    @DeleteMapping("employees/{employeeId}")
+    public String deleteEmployee(@PathVariable int employeeId){
+      Employee employee=  employeeService.findEmployeeById(employeeId);
+      if (employee==null){
+          throw  new RuntimeException("Employee id not found - "+employeeId);
+      }
+      employeeService.deleteEmployeeById(employeeId);
+      return "Deleted employee id - "+employeeId;
     }
 }
